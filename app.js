@@ -15,7 +15,7 @@ const ExtractJWT = require('passport-jwt').ExtractJwt;
 
 var indexRouter = require('./routes/index');
 var postRouter = require('./routes/post');
-
+var commentRouter = require('./routes/comment');
 
 const mongoDb = "mongodb+srv://" + dotenv.parsed.USERNAME + ":" + dotenv.parsed.PASSWORD + "@cluster0.y2sspz1.mongodb.net/blog?retryWrites=true&w=majority&appName=Cluster0";
 
@@ -69,6 +69,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/', indexRouter);
 app.use('/post', postRouter);
+app.use('/comment', commentRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));

@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const passport = require("passport");
 const Post = require("../models/post");
-const comment_controller = require("../controllers/commentController")
 const dotenv = require('dotenv').config()
 
 router.get("/", async (req, res) => {
@@ -11,10 +10,6 @@ router.get("/", async (req, res) => {
   const filteredPosts = allPosts.filter((post) => post.published == true)
   res.json({ posts: filteredPosts });
 });
-
-router.post("/comment", comment_controller.create);
-
-router.post("/comment/update", comment_controller.update);
 
 router.post(
   '/login',

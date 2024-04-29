@@ -1,4 +1,5 @@
 const Comment = require("../models/comment");
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
@@ -19,14 +20,14 @@ exports.create = [
     });
 
     if (!errors.isEmpty()) {
-      res.sendStatus()
+      res.sendStatus(500)
     }
     else {
       await comment.save();
       res.json({ message: 'Comment created' })
     }
   }),];
-
+  
 exports.update = [
   body("content", "content must be specified").trim().isLength({ min: 1 }).escape(),
   asyncHandler(async (req, res, next) => {
