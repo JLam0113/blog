@@ -1,27 +1,31 @@
 const express = require("express");
 const router = express.Router();
-const passport = require("passport");
-const Post = require("../models/post");
 const post_controller = require("../controllers/postController")
+const comment_controller = require("../controllers/commentController")
 const jwt = require('jsonwebtoken')
 const dotenv = require('dotenv').config()
-// TODO Message routes
 
-router.get("/", verifyToken, (req, res) => {
+router.get("/", verifyToken, verifyJWT, post_controller.get);
+
+router.get("/:id", comment_controller.get);
+
+router.post("/create", verifyToken, verifyJWT, post_controller.create);
+
+router.post("/:id/update", verifyToken, verifyJWT, post_controller.update);
+
+function verifyJWT(req, res, next) {
   jwt.verify(req.token, dotenv.parsed.SECRET, async (err, authData) => {
     if (err) {
       res.sendStatus(403);
     } else {
-      const allPosts = await Post.find().sort({ name: 1 }).exec();
-      console.log(allPosts);
-      res.json({ posts: allPosts, authData});
+      next();
     }
   })
-});
+}
 
-function verifyToken(req, res, next){
+function verifyToken(req, res, next) {
   const bearerHeader = req.headers['authorization'];
-  if(typeof bearerHeader !== 'undefined'){
+  if (typeof bearerHeader !== 'undefined') {
     const bearer = bearerHeader.split(' ');
     const bearerToken = bearer[1];
     req.token = bearerToken;
@@ -31,7 +35,5 @@ function verifyToken(req, res, next){
     res.sendStatus(403);
   }
 }
-
-router.post("/create", post_controller.create);
 
 module.exports = router;

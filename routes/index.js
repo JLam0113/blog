@@ -3,15 +3,18 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const passport = require("passport");
 const Post = require("../models/post");
-const message_controller = require("../controllers/postController")
+const comment_controller = require("../controllers/commentController")
 const dotenv = require('dotenv').config()
 
-// TODO Message routes
-
 router.get("/", async (req, res) => {
-  const allPosts = await Post.find().sort({ name: 1 }).exec().filter((post) => post.published == 'true');
-  res.json({ posts: allPosts });
+  const allPosts = await Post.find().sort({ name: 1 }).exec();
+  const filteredPosts = allPosts.filter((post) => post.published == true)
+  res.json({ posts: filteredPosts });
 });
+
+router.post("/comment", comment_controller.create);
+
+router.post("/comment/update", comment_controller.update);
 
 router.post(
   '/login',
@@ -34,7 +37,7 @@ router.post(
               const body = { _id: user._id, username: user.username };
               const token = jwt.sign({ user: body }, dotenv.parsed.SECRET, { expiresIn: '30m' });
 
-              return res.json({ token });
+              return res.json({ username: user.username, token });
             }
           );
         } catch (error) {

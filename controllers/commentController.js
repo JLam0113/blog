@@ -1,46 +1,40 @@
-const Post = require("../models/post");
+const Comment = require("../models/comment");
 
 const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 
 exports.get = asyncHandler(async (req, res, next) => {
-  const allPosts = await Post.find().sort({ name: 1 }).exec();
-  res.json({ posts: allPosts })
+  const allComments = await Comment.find({ "post": new ObjectId(req.params.id) }).sort({ name: 1 }).exec();
+  res.json({ posts: allComments })
 });
 
 exports.create = [
-  body("title", "title must be specified").trim().isLength({ min: 1 }).escape(),
   body("content", "content must be specified").trim().isLength({ min: 1 }).escape(),
-  body("published", "published must be specified").trim().isLength({ min: 1 }).escape(),
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
-    const post = new Post({
-      title: req.body.title,
+    const comment = new Comment({
       content: req.body.content,
       date: new Date(),
-      published: req.body.published,
+      post: new ObjectId(req.body.post),
     });
 
     if (!errors.isEmpty()) {
-      res.sendStatus(500)
+      res.sendStatus()
     }
     else {
-      await post.save();
-      res.json({ message: 'Post created' })
+      await comment.save();
+      res.json({ message: 'Comment created' })
     }
   }),];
 
 exports.update = [
-  body("title", "title must be specified").trim().isLength({ min: 1 }).escape(),
   body("content", "content must be specified").trim().isLength({ min: 1 }).escape(),
-  body("published", "published must be specified").trim().isLength({ min: 1 }).escape(),
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
-    const post = new Post({
-      title: req.body.title,
+    const comment = new Comment({
       content: req.body.content,
       date: new Date(),
-      published: req.body.published,
+      post: new ObjectId(req.body.post),
       _id: req.params.id,
     });
 
@@ -48,7 +42,7 @@ exports.update = [
       res.sendStatus(500)
     }
     else {
-      await Post.findByIdAndUpdate(req.params.id, post, {});
-      res.json({ message: 'Post updated' })
+      await Comment.findByIdAndUpdate(req.params.id, comment, {});
+      res.json({ message: 'Comment updated' })
     }
   }),];
