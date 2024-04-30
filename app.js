@@ -12,6 +12,7 @@ const bcrypt = require('bcryptjs');
 const User = require("./models/user");
 const JWTstrategy = require('passport-jwt').Strategy;
 const ExtractJWT = require('passport-jwt').ExtractJwt;
+const cors = require('cors');
 
 var indexRouter = require('./routes/index');
 var postRouter = require('./routes/post');
@@ -66,6 +67,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/post', postRouter);

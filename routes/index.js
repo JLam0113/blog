@@ -8,6 +8,7 @@ const dotenv = require('dotenv').config()
 router.get("/", async (req, res) => {
   const allPosts = await Post.find().sort({ name: 1 }).exec();
   const filteredPosts = allPosts.filter((post) => post.published == true)
+  console.log(filteredPosts);
   res.json({ posts: filteredPosts });
 });
 
